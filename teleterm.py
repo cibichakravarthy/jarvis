@@ -1,7 +1,7 @@
 import json
 import requests
 import time
-import urllib
+import urllib.parse
 import subprocess
 import shlex
 #from urlparse import urlparse
@@ -30,8 +30,10 @@ def send_mess(text,chid,rply_m=None):
 		url+="&reply_markup={}".format(rply_m)
 	if text:
 		#text = urllib.parse.quote_plus(text);
+		print(text);
 		url+="&text={}".format(text)
-	get_json(url);
+		print(url)
+	print(get_json(url));
 
 
 def get_mess(messages):
@@ -46,19 +48,16 @@ def get_mess(messages):
 			args = shlex.split(text)
 			output = "ERROR ";
 			print(text)
-			try:
+			try:			
 				output,error = subprocess.Popen(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate();
 				print(output.decode("ascii"));
 				print(sender["id"])
 				output = output.decode('ascii');
-				output = output.split("\n");
-				for out in output:
-					send_mess(out,sender["id"]);
+				output.replace("\n","\r\n");
+				send_mess(output,sender["id"]);
 				send_mess(error,sender["id"]);
 			except:
-				print("error");
-		else:
-			send_mess("I wont serve you",sender["id"]);
+				send_mess("I wont serve you",sender["id"]);
 			
 	return offset + 1	 
 
